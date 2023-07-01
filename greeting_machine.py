@@ -19,9 +19,9 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    channel = bot.get_channel(916374828112576533) # The channel ID
+    channel = bot.get_channel(337380248457052161) # The channel ID
     if channel:
-        await channel.send(f'Hello new user! To tell me your preferred pronouns, begin by posting "/pronouns" and I will prompt you from there!')
+        await channel.send(f'Hello new user!')
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -31,3 +31,6 @@ with open('config.json') as config_file:
     config = json.load(config_file)
 
 bot.run(config['token'])
+
+# replace this channel ID before launching to Big Gay Roc: 916374828112576533
+# also maybe attach this text or something like it: "To tell me your preferred pronouns, begin by posting "/pronouns" and I will prompt you from there!"
