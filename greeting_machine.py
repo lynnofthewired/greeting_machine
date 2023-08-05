@@ -11,6 +11,14 @@ intents.messages = True
 intents.message_content = True
 intents.members = True
 
+with open('config.json') as config_file:
+    config = json.load(config_file)
+
+CARELESSLOVE_ID = config['carelesslove_id']
+BGR_WELCOME = config['bgr_welcome']
+CL_CHATTER = config['cl_chatter']
+CL_PRIVATE = config['cl_private']
+
 bot = commands.Bot(command_prefix='$', intents=intents)
 
 pronoun_roles = []
@@ -28,8 +36,8 @@ def role_numbers_check(message):
     return all(i.isdigit() and 0 < int(i) <= len(pronoun_roles) for i in message.content.split(' '))
 
 @bot.command()
-async def greeting_machine_intro(ctx):
-    await ctx.send(f"hello, {ctx.guild.name}. i am the greeting machine. i will greet users when they join this server.\n\ni will also help users add or remove pronoun roles. to do this, begin by typing \"``$pronouns``\"\n\n**see below for a full list of greeting machine commands**:\n\n``$greeting_machine_intro`` - repeats this introduction\n``$pronouns`` - prints a full list of this server's roles that are associated with preferred pronouns\n``$assign`` - if you already know the number associated with your preferred pronoun as it is printed with the \"``$pronouns``\" command, you can use \"``$assign``\" instead. this skips the step of printing the list, and can look like \"``$assign 1``\", or \"``$assign 1 and 2``\", or \"``$assign 1 2 & 3``\", and so on.\n\nif you do not see your preferred pronouns in our listing, please either tag or direct message the administrator.")
+async def intro(ctx):
+    await ctx.send(f"hello, {ctx.guild.name}. i am the greeting machine. i will greet users when they join this server.\n\ni will also help users add or remove pronoun roles. to do this, begin by typing \"``$pronouns``\"\n\n**see below for a full list of greeting machine commands**:\n\n``$intro`` - repeats this introduction\n``$pronouns`` - prints a full list of this server's roles that are associated with preferred pronouns\n``$assign`` - if you already know the number associated with your preferred pronoun as it is printed with the \"``$pronouns``\" command, you can use \"``$assign``\" instead. this skips the step of printing the list, and can look like \"``$assign 1``\", or \"``$assign 1 and 2``\", or \"``$assign 1 2 & 3``\", and so on.\n\nif you do not see your preferred pronouns in our listing, please either tag or direct message the administrator.")
 
 @bot.command()
 async def pronouns(ctx):
@@ -94,12 +102,14 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    channel = bot.get_channel(916374828112576533) 
-    if channel:
-        await channel.send(f':bubbles::sparkles:welcome to {ctx.guild.name}, {member.mention}:sparkles::bubbles:\nplease feel free to introduce yourself, and tell us which pronouns we should use for you, which you can begin by typing "``$pronouns``"')
-
-with open('config.json') as config_file:
-    config = json.load(config_file)
+    if member.guild.id == CARELESSLOVE_ID:
+        channel = bot.get_channel(CL_PRIVATE) 
+        if channel:
+            await channel.send(f'welcome to {member.guild.name}, {member.mention}.\na black wind howls. join our futile prattle as we try to fill the void.\n\nif you wish, please tell us which pronouns we should use for you, which you can begin by typing "``$pronouns``"')
+    else:
+        channel = bot.get_channel(BGR_WELCOME)
+        if channel:
+            await channel.send(f':bubbles::sparkles:welcome to {member.guild.name}, {member.mention}:sparkles::bubbles:\n\nplease carefully read the #rules channel, and follow its instructions\n\nnext, please feel free to introduce yourself, and tell us which pronouns we should use for you, which you can begin by typing "``$pronouns``"')
 
 bot.run(config['token'])
 
